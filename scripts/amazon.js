@@ -6,7 +6,7 @@ loadProducts(renderProductsGrid);
 
 function renderProductsGrid() {
   let productsHTML = ``;
-
+  
   products.forEach( (product) => {
     productsHTML += `
     <div class="product-container">
