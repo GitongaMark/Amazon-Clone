@@ -6,14 +6,21 @@ import { loadCart } from "../data/cart.js";
 //import '../data/backend-practice.js';
 
 async function loadPage() {
-  await loadProductsFetch();
+  try {
+    await loadProductsFetch();
 
-  const value = await new Promise((resolve) => {
-    loadCart(() => {
-      resolve();
+    const value = await new Promise((resolve, reject) => {
+      //throw 'error2';
+      loadCart(() => {
+        //reject('error2');
+        resolve();
+      });
     });
-  });
 
+  }catch (error) {
+    console.log('Unexpected error.Please try again later.');
+  }
+  
   renderOrderSummary();
   renderPaymentSummary();
 }
