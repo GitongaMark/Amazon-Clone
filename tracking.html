@@ -3,9 +3,7 @@
   <head>
     <title>Tracking</title>
 
-    <!-- This code is needed for responsive design to work.
-      (Responsive design = make the website look good on
-      smaller screen sizes like a phone or a tablet). -->
+    <!-- This code is needed for responsive design to work. -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Load a font called Roboto from Google Fonts. -->
@@ -22,18 +20,15 @@
     <div class="amazon-header">
       <div class="amazon-header-left-section">
         <a href="amazon.html" class="header-link">
-          <img class="amazon-logo"
-            src="images/amazon-logo-white.png">
-          <img class="amazon-mobile-logo"
-            src="images/amazon-mobile-logo-white.png">
+          <img class="amazon-logo" src="images/amazon-logo-white.png" alt="Amazon Logo">
+          <img class="amazon-mobile-logo" src="images/amazon-mobile-logo-white.png" alt="Amazon Mobile Logo">
         </a>
       </div>
 
       <div class="amazon-header-middle-section">
         <input class="search-bar" type="text" placeholder="Search">
-
         <button class="search-button">
-          <img class="search-icon" src="images/icons/search-icon.png">
+          <img class="search-icon" src="images/icons/search-icon.png" alt="Search Icon">
         </button>
       </div>
 
@@ -44,8 +39,8 @@
         </a>
 
         <a class="cart-link header-link" href="checkout.html">
-          <img class="cart-icon" src="images/icons/cart-icon.png">
-          <div class="cart-quantity">3</div>
+          <img class="cart-icon" src="images/icons/cart-icon.png" alt="Cart Icon">
+          <div class="cart-quantity" id="cart-quantity">0</div>
           <div class="cart-text">Cart</div>
         </a>
       </div>
@@ -53,24 +48,28 @@
 
     <div class="main">
       <div class="order-tracking">
+        <!-- Link to view all orders -->
         <a class="back-to-orders-link link-primary" href="orders.html">
           View all orders
         </a>
 
-        <div class="delivery-date">
-          Arriving on Monday, June 13
+        <!-- Delivery date info -->
+        <div class="delivery-date" id="delivery-date">
+          Arriving on [Delivery Date]
         </div>
 
-        <div class="product-info">
-          Black and Gray Athletic Cotton Socks - 6 Pairs
+        <!-- Product info -->
+        <div class="product-info" id="product-info">
+          [Product Name]
         </div>
 
-        <div class="product-info">
-          Quantity: 1
+        <div class="product-info" id="quantity-info">
+          Quantity: [Quantity]
         </div>
 
-        <img class="product-image" src="images/products/athletic-cotton-socks-6-pairs.jpg">
+        <img class="product-image" id="product-image" src="" alt="Product Image">
 
+        <!-- Progress status -->
         <div class="progress-labels-container">
           <div class="progress-label">
             Preparing
@@ -83,6 +82,7 @@
           </div>
         </div>
 
+        <!-- Progress bar -->
         <div class="progress-bar-container">
           <div class="progress-bar"></div>
         </div>
@@ -90,8 +90,29 @@
     </div>
 
     <script>
-      const url = new URL(window.location.href);
-      url.searchParams.get('orderId')
+      // Fetch cart item count from localStorage (or any other storage)
+      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartQuantityElement = document.getElementById('cart-quantity');
+      cartQuantityElement.innerText = cartItems.length; // Update cart quantity in header
+
+      // Fetch order tracking information (you could replace this with actual dynamic data from checkout)
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
+
+      // Simulate fetching order details from localStorage or an API based on the orderId
+      const orderDetails = JSON.parse(localStorage.getItem('orders')) || {}; // You should replace with actual data fetching
+
+      const order = orderDetails[orderId];
+
+      if (order) {
+        document.getElementById('delivery-date').innerText = `Arriving on ${order.deliveryDate}`;
+        document.getElementById('product-info').innerText = order.productName;
+        document.getElementById('quantity-info').innerText = `Quantity: ${order.quantity}`;
+        document.getElementById('product-image').src = order.productImage;
+      } else {
+        // Handle case where order is not found
+        alert('Order not found!');
+      }
     </script>
   </body>
 </html>

@@ -28,8 +28,7 @@
         </div>
 
         <div class="checkout-header-middle-section">
-          Checkout (<a class="return-to-home-link"
-            href="amazon.html">3 items</a>)
+          Checkout (<a class="return-to-home-link" href="amazon.html"><span id="cart-count">0</span> items</a>)
         </div>
 
         <div class="checkout-header-right-section">
@@ -46,9 +45,17 @@
         </div>
 
         <div class="payment-summary js-payment-summary">
+
+        <button class="place-order-button button-primary js-place-order">
+            Place your order
+        </button>
+          
         </div>
       </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js"></script>
+
     
     <script type="module" src="scripts/checkout.js"></script>
   </body>

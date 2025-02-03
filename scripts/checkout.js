@@ -1,71 +1,39 @@
 import { renderOrderSummary } from "./checkout/orderSummary.js";
 import { renderPaymentSummary } from "./checkout/paymentSummary.js";
-import { loadProducts, loadProductsFetch} from "../data/products.js";
-import { loadCart } from "../data/cart.js";
-//import '../data/cart-class.js';
-//import '../data/backend-practice.js';
+import { loadProducts } from "../data/products.js"; 
+import { getCartItems } from "../data/cart.js"; 
 
 async function loadPage() {
   try {
-    await loadProductsFetch();
+    // Load local product data
+    loadProducts();  
 
-    const value = await new Promise((resolve, reject) => {
-      //throw 'error2';
-      loadCart(() => {
-        //reject('error2');
-        resolve();
-      });
-    });
+    // Retrieve cart items from local storage
+    const cartItems = getCartItems(); 
 
-  }catch (error) {
-    console.log('Unexpected error.Please try again later.');
+    // Render summaries using retrieved cart data
+    renderOrderSummary(cartItems);
+    renderPaymentSummary(cartItems);
+  } catch (error) {
+    console.log('Unexpected error. Please try again later:', error);
   }
-  
-  renderOrderSummary();
-  renderPaymentSummary();
 }
+
+// Set event listener for placing an order
+function setPlaceOrderListener() {
+  const placeOrderButton = document.querySelector('.js-place-order');
+  placeOrderButton.addEventListener('click', () => {
+    const cartItems = getCartItems(); // Get the latest cart items
+    console.log('Order placed:', cartItems);
+
+    // Store order data in local storage (or another method)
+    localStorage.setItem('order', JSON.stringify(cartItems));
+
+    // Redirect to orders page
+    window.location.href = 'orders.html';
+  });
+}
+
+// Initialize the page
 loadPage();
-
-/*
-Promise.all([
-  loadProductsFetch(),
-  new Promise((resolve) => {
-    loadCart(() => {
-      resolve();
-    });
-  })
-
-]).then((values) => {
-  console.log(values);
-  renderOrderSummary();
-  renderPaymentSummary();
-});
-*/
-
-/*
-new Promise((resolve) => {
-  loadProducts(() => {
-    resolve('value1');
-  });
-
-}).then((value) => {
-  return new Promise((resolve) => {
-    loadCart(() => {
-      resolve();
-    });
-  });
-
-}).then(() => {
-  renderOrderSummary();
-  renderPaymentSummary();
-});
-*/
-
-/*
-loadProducts(() => {
-  loadCart(() => {
-    renderOrderSummary();
-    renderPaymentSummary();
-  });
-});
-*/
+setPlaceOrderListener();
