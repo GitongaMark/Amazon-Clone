@@ -1,89 +1,70 @@
-import {cart, addToCart} from '../data/cart.js';
-import {products, loadProducts} from '../data/products.js';
-import formatCurrency from './utils/money.js';
+import { products } from "../data/products.js";
+import { addToCart } from "../data/cart.js";
 
-loadProducts(renderProductsGrid);
+console.log("Products loaded successfully");
+renderProductsGrid(products);
 
-function renderProductsGrid() {
-  let productsHTML = ``;
-  
-  products.forEach( (product) => {
+function renderProductsGrid(products) {
+  console.log("Rendering products grid...");
+  let productsHTML = "";
+
+  products.forEach((product) => {
+    console.log("Rendering product:", product.name);
+
+    const starsUrl = product.getStarsUrl();
+    const price = product.getPrice();
+    
+    // ✅ Get extra info (for clothing, this includes the size chart)
+    const extraInfo = product.extraInfoHTML();
+
     productsHTML += `
-    <div class="product-container">
-            <div class="product-image-container">
-              <img class="product-image"
-                src="${product.image}">
-            </div>
-
-            <div class="product-name limit-text-to-2-lines">
-              ${product.name}
-            </div>
-
-            <div class="product-rating-container">
-              <img class="product-rating-stars"
-                src="${product.getStarsUrl()}">
-              <div class="product-rating-count link-primary">
-                ${product.rating.count}
-              </div>
-            </div>
-
-            <div class="product-price">
-            ${product.getPrice()}
-            </div>
-
-            <div class="product-quantity-container">
-              <select>
-                <option selected value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-              </select>
-            </div>
-
-            ${product.extraInfoHTML()}
-
-            <div class="product-spacer"></div>
-
-            <div class="added-to-cart">
-              <img src="images/icons/checkmark.png">
-              Added
-            </div>
-
-            <button class="js-add-to-cart add-to-cart-button button-primary"
-            data-product-id="${product.id}">
-              Add to Cart
-            </button>
+      <div class="product-container">
+        <div class="product-image-container">
+          <img class="product-image" src="${product.image}">
+        </div>
+        <div class="product-name limit-text-to-2-lines">
+          ${product.name}
+        </div>
+        <div class="product-rating-container">
+          <img class="product-rating-stars" src="${starsUrl}">
+          <div class="product-rating-count link-primary">
+            ${product.rating?.count || 0}
           </div>
-  `;
+        </div>
+        <div class="product-price">
+          ${price}
+        </div>
+        
+        <!-- ✅ Add size chart link for clothing -->
+        <div class="product-extra-info">
+          ${extraInfo}
+        </div>
+
+        <div class="product-quantity-container">
+          <select>
+            ${Array.from({ length: 10 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
+          </select>
+        </div>
+        <div class="product-spacer"></div>
+        <div class="added-to-cart">
+          <img src="images/icons/checkmark.png">
+          Added
+        </div>
+        <button class="js-add-to-cart add-to-cart-button button-primary" data-product-id="${product.id}">
+          Add to Cart
+        </button>
+      </div>
+    `;
   });
 
-  function updateCartQuantity() {
-    let cartQuantity = 0;
+  document.querySelector(".js-products-grid").innerHTML = productsHTML;
 
-    cart.forEach((cartItem) => {
-      cartQuantity += cartItem.quantity;
+  // ✅ Add event listeners for "Add to Cart" buttons
+  document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+    button.addEventListener("click", () => {
+      const productId = button.dataset.productId;
+      console.log(`Adding product ID: ${productId} to cart`);
+      addToCart(productId); // Import this function from cart.js
     });
-    document.querySelector('.js-cart-quantity')
-        .innerHTML = cartQuantity;
-
-  }
-
-  document.querySelector('.js-products-grid') 
-  .innerHTML = productsHTML;
-
-  document.querySelectorAll('.js-add-to-cart')
-    .forEach((button) => {
-      button.addEventListener('click', () => {
-        const productId = button.dataset.productId;
-        addToCart(productId);
-        updateCartQuantity();
-      
-      });
-    });
+  });
 }

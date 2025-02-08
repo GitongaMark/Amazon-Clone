@@ -1,6 +1,15 @@
 import {formatCurrency} from '../scripts/utils/money.js';
 
-export const products = [
+export function getProduct(productId) {
+  const product = products.find((p) => p.id === productId);
+  if (!product) {
+    console.warn(`Warning: No product found with ID ${productId}`);
+  }
+  return product;
+}
+
+
+const rawProducts = [
   {
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
     image: "images/products/athletic-cotton-socks-6-pairs.jpg",
@@ -659,16 +668,7 @@ export const products = [
       "mens"
     ]
   }
-].map((productDetails)=>{
-  if (productDetails.type === 'clothing') {
-    return new Clothing(productDetails);
-  }
-  return new Product(productDetails);
-});
-
-export function getProduct(productId) {
-  return products.find(product => product.id === productId);
-}
+]
 
 class Product {
   constructor(productDetails) {
@@ -678,20 +678,20 @@ class Product {
     this.rating = productDetails.rating;
     this.priceCents = productDetails.priceCents;
   }
+ 
   getStarsUrl() {
-    return `images/ratings/rating-${this.rating.stars * 10}.png`;
+      return `images/ratings/rating-${this.rating.stars * 10}.png`;
   }
+
   getPrice() {
-    return `$${formatCurrency(this.priceCents)}`;
+    return `$${(this.priceCents / 100).toFixed(2)}`;
   }
+
   extraInfoHTML() {
     return '';
   }
 }
-
 class Clothing extends Product {
-  sizeChartLink;
-  
   constructor(productDetails) {
     super(productDetails);
     this.sizeChartLink = productDetails.sizeChartLink;
@@ -699,22 +699,21 @@ class Clothing extends Product {
 
   extraInfoHTML() {
     return `
-    <a href="${this.sizeChartLink}" target="blank">
-    Size chart</a>
+      <a href="${this.sizeChartLink}" target="_blank">
+        Size chart
+      </a>
     `;
   }
 }
-
-// Mapping products to Product or Clothing instances based on type
-export function mapProductsToClasses() {
-  return products.map(productDetails => {
-    if (productDetails.type === 'clothing') {
-      return new Clothing(productDetails);
-    }
-    return new Product(productDetails);
-  });
-}
-
-export function loadProducts() {
-  return products;
+export const products = rawProducts.map((productDetails) => {
+  if (productDetails.type === "clothing") {
+    return new Clothing(productDetails);
+  }
+  return new Product(productDetails);
+});
+export function loadProducts(callback) {
+  console.log("Loading products...");
+  if (callback) {
+    callback(products);
+  }
 }

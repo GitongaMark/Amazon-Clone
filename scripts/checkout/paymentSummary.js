@@ -4,11 +4,12 @@ import {getDeliveryOption} from '../../data/deliveryOptions.js';
 import {formatCurrency} from '../utils/money.js';
 import { addOrder } from '../../data/orders.js';
 export function renderPaymentSummary() {
+  let total = 0;
   let productPriceCents = 0;
   let shippingPriceCents = 0;
 
   cart.forEach((cartItem) => {
-    constProduct = getProduct(cartItem.productId);
+    const matchingProduct = getProduct(cartItem.productId);
     productPriceCents += products.priceCents * cartItem.quantity;
 
     const deliveryoption = getDeliveryOption(cartItem.getDeliveryOptionId);
