@@ -18,6 +18,7 @@ export function renderOrderSummary() {
       console.error(`Product with ID ${productId} not found!`);
       return; // Skip the current iteration if product not found
     }
+    
 
     // Get the selected delivery option for the product
     const deliveryOptionId = cartItem.deliveryOptionId;
@@ -32,8 +33,8 @@ export function renderOrderSummary() {
       deliveryOptions.forEach((option) => {
         const deliveryDate = today.add(option.deliveryDays, 'days');
         const dateString = deliveryDate.format('dddd, MMMM D');
-        //const priceString = option.priceCents === 0 ? 'FREE' : `$${formatCurrency(option.priceCents)} -`;
-        const formattedPrice = matchingProduct.price ? formatCurrency(matchingProduct.price) : 'N/A';
+        const priceString = option.priceCents === 0 ? 'FREE' : `$${formatCurrency(option.priceCents)} -`;
+        //const formattedPrice = matchingProduct.price ? formatCurrency(matchingProduct.price) : 'N/A';
         const isChecked = option.id === cartItem.deliveryOptionId;
 
         html += `
@@ -62,7 +63,7 @@ export function renderOrderSummary() {
           <img class="product-image" src="${matchingProduct.image}" alt="${matchingProduct.name}">
           <div class="cart-item-details">
             <div class="product-name">${matchingProduct.name}</div>
-            <div class="product-price">${formatCurrency(formattedPrice)}</div>
+            <div class="product-price">${formatCurrency(matchingProduct.price)}</div>
             <div class="product-quantity js-product-quantity-${matchingProduct.id}">
               <span>Quantity: <span class="quantity-label">${cartItem.quantity}</span></span>
               <span class="update-quantity-link link-primary">Update</span>

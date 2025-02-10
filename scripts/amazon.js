@@ -1,9 +1,20 @@
 import { products } from "../data/products.js";
-import { addToCart } from "../data/cart.js";
+import { addToCart, getTotalItemsInCart } from "../data/cart.js";
 
 console.log("Products loaded successfully");
 renderProductsGrid(products);
 
+function updateCartCount() {
+  const totalItems = getTotalItemsInCart();
+  const cartQuantityElement = document.querySelector('.js-cart-quantity');
+  if (cartQuantityElement) {
+    cartQuantityElement.textContent = totalItems;
+  }
+}
+
+window.onload = function () {
+  updateCartCount();
+};
 function renderProductsGrid(products) {
   console.log("Rendering products grid...");
   let productsHTML = "";
@@ -41,7 +52,7 @@ function renderProductsGrid(products) {
         </div>
 
         <div class="product-quantity-container">
-          <select>
+          <select class="js-quantity-selector">
             ${Array.from({ length: 10 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
           </select>
         </div>
@@ -58,13 +69,36 @@ function renderProductsGrid(products) {
   });
 
   document.querySelector(".js-products-grid").innerHTML = productsHTML;
+document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+  button.addEventListener("click", () => {
+    const productId = button.dataset.productId;
 
-  // ✅ Add event listeners for "Add to Cart" buttons
-  document.querySelectorAll(".js-add-to-cart").forEach((button) => {
-    button.addEventListener("click", () => {
-      const productId = button.dataset.productId;
-      console.log(`Adding product ID: ${productId} to cart`);
-      addToCart(productId); // Import this function from cart.js
-    });
+    // Find the closest product container
+    const productContainer = button.closest(".product-container");
+    if (!productContainer) {
+      console.error("Error: Could not find product container for this button.");
+      return;
+    }
+
+    // Find the quantity selector within the product container
+    const quantitySelector = productContainer.querySelector(".js-quantity-selector");
+    if (!quantitySelector) {
+      console.error("Error: Could not find quantity selector for this product.");
+      return;
+    }
+
+    // Get the selected quantity
+    const quantity = parseInt(quantitySelector.value, 10);
+    if (isNaN(quantity) || quantity <= 0) {
+      console.error("Error: Invalid quantity selected.");
+      return;
+    }
+
+    console.log(`Adding product ID: ${productId} with quantity: ${quantity} to cart`);
+    for (let i = 0; i < quantity; i++) {
+      addToCart(productId); // Add the product to the cart multiple times based on quantity
+    }
+    updateCartCount(); // Update the cart count dynamically
   });
+});
 }

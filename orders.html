@@ -1,129 +1,126 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Orders</title>
-
-    <!-- Responsive design -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Load a font called Roboto from Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-    <!-- CSS files -->
-    <link rel="stylesheet" href="styles/shared/general.css">
-    <link rel="stylesheet" href="styles/shared/amazon-header.css">
-    <link rel="stylesheet" href="styles/pages/orders.css">
-  </head>
-  <body>
-    <div class="amazon-header">
-      <div class="amazon-header-left-section">
-        <a href="amazon.html" class="header-link">
-          <img class="amazon-logo" src="images/amazon-logo-white.png" alt="Amazon Logo">
-          <img class="amazon-mobile-logo" src="images/amazon-mobile-logo-white.png" alt="Amazon Mobile Logo">
-        </a>
-      </div>
-
-      <div class="amazon-header-middle-section">
-        <input class="search-bar" type="text" placeholder="Search">
-        <button class="search-button">
-          <img class="search-icon" src="images/icons/search-icon.png" alt="Search Icon">
-        </button>
-      </div>
-
-      <div class="amazon-header-right-section">
-        <a class="orders-link header-link" href="orders.html">
-          <span class="returns-text">Returns</span>
-          <span class="orders-text">& Orders</span>
-        </a>
-
-        <a class="cart-link header-link" href="checkout.html">
-          <img class="cart-icon" src="images/icons/cart-icon.png" alt="Cart Icon">
-          <div class="cart-quantity" id="cart-quantity">0</div>
-          <div class="cart-text">Cart</div>
-        </a>
-      </div>
+<head>
+  <title>Orders</title>
+  <!-- Responsive design -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Load a font called Roboto from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- CSS files -->
+  <link rel="stylesheet" href="styles/shared/general.css">
+  <link rel="stylesheet" href="styles/shared/amazon-header.css">
+  <link rel="stylesheet" href="styles/pages/orders.css">
+</head>
+<body>
+  <div class="amazon-header">
+    <div class="amazon-header-left-section">
+      <a href="amazon.html" class="header-link">
+        <img class="amazon-logo" src="images/amazon-logo-white.png" alt="Amazon Logo">
+        <img class="amazon-mobile-logo" src="images/amazon-mobile-logo-white.png" alt="Amazon Mobile Logo">
+      </a>
     </div>
-
-    <div class="main">
-      <div class="page-title">Your Orders</div>
-
-      <div class="orders-grid" id="orders-grid">
-        <!-- Dynamic orders will go here -->
-      </div>
+    <div class="amazon-header-middle-section">
+      <input class="search-bar" type="text" placeholder="Search">
+      <button class="search-button">
+        <img class="search-icon" src="images/icons/search-icon.png" alt="Search Icon">
+      </button>
     </div>
+    <div class="amazon-header-right-section">
+      <a class="orders-link header-link" href="orders.html">
+        <span class="returns-text">Returns</span>
+        <span class="orders-text">& Orders</span>
+      </a>
+      <a class="cart-link header-link" href="checkout.html">
+        <img class="cart-icon" src="images/icons/cart-icon.png" alt="Cart Icon">
+        <div class="cart-quantity" id="cart-quantity">0</div>
+        <div class="cart-text">Cart</div>
+      </a>
+    </div>
+  </div>
+  <div class="main">
+    <div class="page-title">Your Orders</div>
+    <div class="orders-grid" id="orders-grid">
+      <!-- Dynamic orders will go here -->
+    </div>
+  </div>
 
-    <script>
-      // Fetch cart item count dynamically
-      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-      const cartQuantityElement = document.getElementById('cart-quantity');
-      cartQuantityElement.innerText = cartItems.length; // Update cart quantity
+  <script type="module">
+    import { orders } from '../data/orders.js'; // Import orders from order.js
 
-      // Fetch orders from localStorage or an API
-      const orders = JSON.parse(localStorage.getItem('orders')) || []; // Replace with actual fetching logic
+    // Fetch cart item count dynamically
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartQuantityElement = document.getElementById('cart-quantity');
+    cartQuantityElement.innerText = cartItems.length; // Update cart quantity
 
-      // Function to display orders
-      function displayOrders() {
-        const ordersGrid = document.getElementById('orders-grid');
-        ordersGrid.innerHTML = ''; // Clear the current orders grid
+    // Function to display orders
+    function displayOrders() {
+      const ordersGrid = document.getElementById('orders-grid');
+      ordersGrid.innerHTML = ''; // Clear the current orders grid
 
-        orders.forEach(order => {
-          const orderContainer = document.createElement('div');
-          orderContainer.classList.add('order-container');
-
-          orderContainer.innerHTML = `
-            <div class="order-header">
-              <div class="order-header-left-section">
-                <div class="order-date">
-                  <div class="order-header-label">Order Placed:</div>
-                  <div>${order.orderDate}</div>
-                </div>
-                <div class="order-total">
-                  <div class="order-header-label">Total:</div>
-                  <div>${order.total}</div>
-                </div>
-              </div>
-
-              <div class="order-header-right-section">
-                <div class="order-header-label">Order ID:</div>
-                <div>${order.orderId}</div>
-              </div>
-            </div>
-
-            <div class="order-details-grid">
-              ${order.items.map(item => `
-                <div class="product-image-container">
-                  <img src="${item.image}" alt="${item.name}">
-                </div>
-
-                <div class="product-details">
-                  <div class="product-name">${item.name}</div>
-                  <div class="product-delivery-date">Arriving on: ${item.deliveryDate}</div>
-                  <div class="product-quantity">Quantity: ${item.quantity}</div>
-                  <button class="buy-again-button button-primary">
-                    <img class="buy-again-icon" src="images/icons/buy-again.png" alt="Buy Again Icon">
-                    <span class="buy-again-message">Buy it again</span>
-                  </button>
-                </div>
-
-                <div class="product-actions">
-                  <a href="tracking.html?orderId=${order.orderId}">
-                    <button class="track-package-button button-secondary">
-                      Track package
-                    </button>
-                  </a>
-                </div>
-              `).join('')}
-            </div>
-          `;
-
-          ordersGrid.appendChild(orderContainer);
-        });
+      if (orders.length === 0) {
+        ordersGrid.innerHTML = '<div class="empty-orders-message">No orders found.</div>';
+        return;
       }
 
-      // Display orders
+      orders.forEach((order, index) => {
+        const orderContainer = document.createElement('div');
+        orderContainer.classList.add('order-container');
+
+        // Generate a unique order ID (for demonstration purposes)
+        const orderId = `ORD-${index + 1}`;
+
+        orderContainer.innerHTML = `
+          <div class="order-header">
+            <div class="order-header-left-section">
+              <div class="order-date">
+                <div class="order-header-label">Order Placed:</div>
+                <div>${new Date(order.timestamp).toLocaleDateString()}</div>
+              </div>
+              <div class="order-total">
+                <div class="order-header-label">Total:</div>
+                <div>$${(order.total / 100).toFixed(2)}</div>
+              </div>
+            </div>
+            <div class="order-header-right-section">
+              <div class="order-header-label">Order ID:</div>
+              <div>${orderId}</div>
+            </div>
+          </div>
+          <div class="order-details-grid">
+            ${order.cart.map(item => `
+              <div class="product-image-container">
+                <img src="${item.image}" alt="${item.name}">
+              </div>
+              <div class="product-details">
+                <div class="product-name">${item.name} (Quantity: ${item.quantity})</div>
+                <div class="product-delivery-date">Arriving on: ${item.deliveryDate}</div>
+                <div class="product-payment-method">Payment Method: ${order.paymentMethod || 'N/A'}</div>
+                <button class="buy-again-button button-primary">
+                  <img class="buy-again-icon" src="images/icons/buy-again.png" alt="Buy Again Icon">
+                  <span class="buy-again-message">Buy it again</span>
+                </button>
+              </div>
+              <div class="product-actions">
+                <a href="tracking.html?orderId=${orderId}">
+                  <button class="track-package-button button-secondary">
+                    Track package
+                  </button>
+                </a>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        ordersGrid.appendChild(orderContainer);
+      });
+    }
+
+    // Display orders when the page loads
+    window.onload = () => {
       displayOrders();
-    </script>
-  </body>
+    };
+  </script>
+</body>
 </html>

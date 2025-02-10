@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment</title>
+    <link rel="stylesheet" href="styles/payment.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Payment</h1>
+        <form action="/place-order" method="POST" id="payment-form">
+            <input type="hidden" name="order_id" value="{{ order_id }}">
+            <input type="hidden" name="amount" value="{{ totalAfterTax }}">
+            <!-- Payment Information -->
+            <div class="payment-info">
+                <p><strong>Amount to Pay:</strong> ${{ totalAfterTax }}</p>
+            </div>
+            <!-- Payment Method Selection -->
+            <div class="payment-options">
+                <div class="payment-option" data-method="paypal">
+                    <img class="logo" src="images/paypal_logo.png" alt="PayPal">
+                </div>
+                <div class="payment-option" data-method="visa_master">
+                    <img class="logo" src="images/Visa_Mastercard.png" alt="Visa/MasterCard">
+                </div>
+                <div class="payment-option" data-method="mpesa">
+                    <img class="logo" src="images/mpesa_logo.png" alt="M-Pesa">
+                </div>
+                <div class="payment-option" data-method="airtel_money">
+                    <img class="logo" src="images/airtel_money.png" alt="Airtel Money">
+                </div>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" id="place-order-btn">Proceed to Payment</button>
+        </form>
+    </div>
+    <script src="scripts/payment.js"></script>
+</body>
+</html>

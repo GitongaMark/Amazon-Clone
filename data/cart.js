@@ -62,3 +62,7 @@ export function updateDeliveryOption(productId, deliveryOptionId) {
     saveToStorage();
   }
 }
+
+export function getTotalItemsInCart() {
+  return cart.reduce((sum, item) => sum + item.quantity, 0);
+}
