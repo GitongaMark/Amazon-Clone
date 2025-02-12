@@ -124,7 +124,7 @@ export function setPlaceOrderListener() {
     addOrder(order);
 
     // Redirect to orders page
-    window.location.href = "orders.html";
+    window.location.href = "payment.html";
   });
 }
 
@@ -146,21 +146,37 @@ function generateOrderId() {
 // Function to redirect to the payment page with the required data
 function redirectToPaymentPage() {
   const totalCents = getTotalCartTotal(); // Get the total cart amount in cents
+  if (totalCents <= 0) {
+      alert("Your cart total is zero. Please add items before proceeding.");
+      return;
+  }
+
   const totalDollars = (totalCents / 100).toFixed(2); // Convert cents to dollars
+  const orderId = generateOrderId(); // Generate a unique order ID
 
-  // Generate a unique order ID
-  const orderId = generateOrderId();
-
-  // Redirect to the payment page with query parameters
+  // Construct the payment URL with query parameters
   const paymentUrl = `/payment?order_id=${encodeURIComponent(orderId)}&totalAfterTax=${encodeURIComponent(totalDollars)}`;
+  console.log("Redirecting to:", paymentUrl); // Debugging: Log the URL
   window.location.href = paymentUrl;
 }
 
 // Example: Call redirectToPaymentPage when the user clicks the "Proceed to Checkout" button
-document.getElementById("proceed-to-checkout-btn").addEventListener("click", function () {
-  if (confirm("Are you sure you want to proceed to checkout?")) {
-    redirectToPaymentPage();
-  }
+document.addEventListener("DOMContentLoaded",      function () {
+    // Use querySelector to select the button by its class
+    const button = document.querySelector(".js-place-order");
+
+    // Check if the button exists
+    if (!button) {
+      console.error("Element with class 'js-place-order' not found in the DOM.");
+      return;
+    }
+
+    // Add the click event listener
+    button.addEventListener("click", function () {
+      if (confirm("Are you sure you want to proceed to pay?")) {
+        redirectToPaymentPage();
+      }
+    });
 });
 
 function calculateDeliveryDate(deliveryDays) {

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment</title>
+    <link rel="stylesheet" href="styles/pages/payment.css">
+</head>
+<body>
+    <header class="checkout-header">
+        <div class="header-content">
+            <!-- Left Section: Logo -->
+            <div class="checkout-header-left-section">
+                <a href="checkout.html" aria-label="Go to checkout">
+                    <img class="amazon-logo" src="images/amazon-logo.png" alt="Amazon Logo">
+                    <img class="amazon-mobile-logo" src="images/amazon-mobile-logo.png" alt="Amazon Mobile Logo">
+                </a>
+            </div>
+    
+            <!-- Middle Section: Checkout Info -->
+            <div class="checkout-header-middle-section">
+                <span>payment of </span>
+                <a class="return-to-home-link" href="amazon.html" aria-label="Return to Home with Cart Items">
+                    (<span id="cart-count">0</span> items)
+                </a>
+            </div>
+    
+            <!-- Right Section: Security Icon -->
+            <div class="checkout-header-right-section">
+                <img src="images/icons/checkout-lock-icon.png" alt="Secure Checkout">
+            </div>
+        </div>
+    </header>
+
+    <div class="main">
+        <h1>Method of payment</h1>
+        <form action="/place-order" method="POST" id="payment-form">
+            <input type="hidden" name="order_id" value="{{ order_id }}">
+            <input type="hidden" name="amount" value="{{ totalAfterTax }}">
+            <!-- Payment Information -->
+            <div class="payment-info">
+                <p><strong>Amount to Pay:</strong> ${{ totalAfterTax }}</p>
+            </div>
+            <!-- Payment Method Selection -->
+            <div class="payment-options">
+                <div class="payment-option" data-method="paypal">
+                    <img class="logo" src="images/icons/paypal_logo.png" alt="PayPal">
+                </div>
+                <div class="payment-option" data-method="visa_master">
+                    <img class="logo" src="images/icons/Visa_Mastercard.png" alt="Visa/MasterCard">
+                </div>
+                <div class="payment-option" data-method="mpesa">
+                    <img class="logo" src="images/icons/mpesa_logo.png" alt="M-Pesa">
+                </div>
+                <div class="payment-option" data-method="airtel_money">
+                    <img class="logo" src="images/icons/airtel_money.png" alt="Airtel Money">
+                </div>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" id="place-order-btn">Proceed to Pay</button>
+        </form>
+    </div>
+    <script type="module" src="scripts/payment.js"></script>
+</body>
+</html>
