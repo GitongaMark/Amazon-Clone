@@ -2,17 +2,9 @@
 <html>
   <head>
     <title>Checkout</title>
-
-    <!-- This code is needed for responsive design to work.
-      (Responsive design = make the website look good on
-      smaller screen sizes like a phone or a tablet). -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Load a font called Roboto from Google Fonts. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
-    <!-- Here are the CSS files for this page. -->
     <link rel="stylesheet" href="styles/shared/general.css">
     <link rel="stylesheet" href="styles/pages/checkout/checkout-header.css">
     <link rel="stylesheet" href="styles/pages/checkout/checkout.css">
@@ -26,37 +18,51 @@
             <img class="amazon-mobile-logo" src="images/amazon-mobile-logo.png">
           </a>
         </div>
-
         <div class="checkout-header-middle-section">
           Checkout (<a class="return-to-home-link" href="amazon.html"><span id="cart-count">0</span> items</a>)
         </div>
-
         <div class="checkout-header-right-section">
           <img src="images/icons/checkout-lock-icon.png">
         </div>
       </div>
     </div>
-
+    
     <div class="main">
       <div class="page-title">Review your order</div>
-
       <div class="checkout-grid">
         <div class="order-summary js-order-summary">
         </div>
-
         <div class="payment-summary js-payment-summary">
-
-          <button id="place-order-button" class="place-order-button button-primary js-place-order">
-            Place your order
-        </button>
           
+          <!-- Hidden form to pass order_id and amount using POST -->
+          <form id="payment-form" action="/payment" method="post">
+            <input type="hidden" name="order_id" id="order-id" value="">
+            <input type="hidden" name="amount" id="order-amount" value="">
+            <button type="submit" class="place-order-button button-primary js-place-order">
+              Place your order
+            </button>
+          </form>
+          
+          <!-- Alternative: Link to pass order_id and amount using GET -->
+          <a id="payment-link" href="/payment" class="button-primary">Proceed to Payment</a>
         </div>
       </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js"></script>
-
     
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js"></script>
     <script type="module" src="scripts/checkout.js"></script>
+    
+    <script>
+      // Sample order details (replace with real data from your cart system)
+      const orderId = "ORD12345"; // Generate or fetch from backend
+      const orderAmount = "49.99"; // Get total amount dynamically
+      
+      document.getElementById("order-id").value = orderId;
+      document.getElementById("order-amount").value = orderAmount;
+      
+      // Update GET request link with query params
+      const paymentLink = document.getElementById("payment-link");
+      paymentLink.href = `/payment?order_id=${orderId}&amount=${orderAmount}`;
+    </script>
   </body>
 </html>

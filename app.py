@@ -59,8 +59,18 @@ def place_order():
 @app.route('/payment', methods=['GET', 'POST'])
 def payment():
     if request.method == 'POST':
-        return render_template('payment.html', order_id=request.form['order_id'], amount=request.form['amount'])
-    return render_template('payment.html')
+        order_id = request.form['order_id']
+        amount = request.form['amount']
+    else:
+        order_id = request.args.get('order_id')
+        amount = request.args.get('amount')
+
+    if not order_id or not amount:
+        flash("Missing order details.")
+        return redirect(url_for('checkout'))  # Redirect back to checkout if missing
+
+    return render_template('payment.html', order_id=order_id, amount=amount)
+
 
 @app.route('/orders/<order_id>')
 def orders(order_id):

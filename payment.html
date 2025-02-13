@@ -35,10 +35,18 @@
         <form action="/place-order" method="POST" id="payment-form">
             <input type="hidden" name="order_id" value="{{ order_id }}">
             <input type="hidden" name="amount" value="{{ totalAfterTax }}">
+    
             <!-- Payment Information -->
             <div class="payment-info">
                 <p><strong>Amount to Pay:</strong> ${{ totalAfterTax }}</p>
             </div>
+    
+            <!-- Email Field -->
+            <div id="email-field" style="display: block;">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+    
             <!-- Payment Method Selection -->
             <div class="payment-options">
                 <div class="payment-option" data-method="paypal">
@@ -54,6 +62,25 @@
                     <img class="logo" src="images/icons/airtel_money.png" alt="Airtel Money">
                 </div>
             </div>
+    
+            <!-- Card Details -->
+            <div id="card-details" style="display: none;">
+                <label for="card_number">Card Number:</label>
+                <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" required>
+    
+                <label for="card_expiry">Expiry Date (MM/YY):</label>
+                <input type="text" id="card_expiry" name="card_expiry" placeholder="MM/YY" required>
+    
+                <label for="card_cvv">CVV:</label>
+                <input type="text" id="card_cvv" name="card_cvv" maxlength="4" required>
+            </div>
+    
+            <!-- M-Pesa/Airtel Money Details -->
+            <div id="mpesa-details" style="display: none;">
+                <label for="phone_number">Phone Number:</label>
+                <input type="text" id="phone_number" name="phone_number" placeholder="+254..." required>
+            </div>
+    
             <!-- Submit Button -->
             <button type="submit" id="place-order-btn">Proceed to Pay</button>
         </form>

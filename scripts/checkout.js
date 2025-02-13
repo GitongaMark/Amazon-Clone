@@ -88,43 +88,56 @@ async function loadPage() {
 
 // Set event listener for placing an order
 // Set event listener for placing an order
-export function setPlaceOrderListener() {
+export function handlePlaceOrder() {
   const placeOrderButton = document.querySelector(".js-place-order");
+  if (!placeOrderButton) {
+    console.error("Place order button not found.");
+    return;
+  }
+
   placeOrderButton.addEventListener("click", () => {
-    const cartItems = getCartItems(); // Get the latest cart items
+    if (!confirm("Are you sure you want to proceed to pay?")) return;
+
+    const cartItems = getCartItems();
     if (cartItems.length === 0) {
       alert("Your cart is empty. Please add items to proceed.");
       return;
     }
 
-    const total = getTotalCartTotal();
+    const totalCents = getTotalCartTotal();
+    if (totalCents <= 0) {
+      alert("Your cart total is zero. Please add items before proceeding.");
+      return;
+    }
+
+    const totalDollars = (totalCents / 100).toFixed(2);
+    const orderId = generateOrderId();
 
     // Create the order object
     const order = {
       cart: cartItems.map(item => {
         const product = getProductById(item.productId);
-        const deliveryOption = getDeliveryOption(item.deliveryOptionId); // Get the selected delivery option
-
+        const deliveryOption = getDeliveryOption(item.deliveryOptionId);
         return {
           productId: item.productId,
           name: product?.name || "Unknown Product",
           image: product?.image || "default-image.jpg",
           quantity: item.quantity,
-          deliveryDate: calculateDeliveryDate(deliveryOption.deliveryDays), // Calculate delivery date
+          deliveryDate: calculateDeliveryDate(deliveryOption?.deliveryDays || 0),
           priceCents: product?.priceCents || 0,
         };
       }),
-      total: total,
+      total: totalCents,
       timestamp: new Date().toISOString(),
     };
 
     console.log("Order placed:", order);
-
-    // Add the order to localStorage
     addOrder(order);
 
-    // Redirect to orders page
-    window.location.href = "payment.html";
+    // Redirect to payment page
+    const paymentUrl = `/payment?order_id=${encodeURIComponent(orderId)}&totalAfterTax=${encodeURIComponent(totalDollars)}`;
+    console.log("Redirecting to:", paymentUrl);
+    window.location.href = paymentUrl;
   });
 }
 
