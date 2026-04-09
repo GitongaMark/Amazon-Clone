@@ -109,7 +109,7 @@ def place_order():
 
     except Exception as e:
         flash(f"Payment failed: {str(e)}")
-        return redirect(url_for('payment'))
+        return redirect(url_for('payment', order_id=order_id, totalAfterTax=amount))
 
 @app.route('/payment', methods=['GET', 'POST'])
 def payment():
