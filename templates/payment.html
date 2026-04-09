@@ -35,6 +35,7 @@
         <form action="/place-order" method="POST" id="payment-form">
             <input type="hidden" name="order_id" value="{{ order_id }}">
             <input type="hidden" name="amount" value="{{ totalAfterTax }}">
+            <input type="hidden" name="payment_method" value="paypal">
     
             <!-- Payment Information -->
             <div class="payment-info">
@@ -66,19 +67,19 @@
             <!-- Card Details -->
             <div id="card-details" style="display: none;">
                 <label for="card_number">Card Number:</label>
-                <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" required>
-    
+                <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456">
+
                 <label for="card_expiry">Expiry Date (MM/YY):</label>
-                <input type="text" id="card_expiry" name="card_expiry" placeholder="MM/YY" required>
-    
+                <input type="text" id="card_expiry" name="card_expiry" placeholder="MM/YY">
+
                 <label for="card_cvv">CVV:</label>
-                <input type="text" id="card_cvv" name="card_cvv" maxlength="4" required>
+                <input type="text" id="card_cvv" name="card_cvv" maxlength="4">
             </div>
     
             <!-- M-Pesa/Airtel Money Details -->
             <div id="mpesa-details" style="display: none;">
                 <label for="phone_number">Phone Number:</label>
-                <input type="text" id="phone_number" name="phone_number" placeholder="+254..." required>
+                <input type="text" id="phone_number" name="phone_number" placeholder="+254...">
             </div>
     
             <!-- Submit Button -->
