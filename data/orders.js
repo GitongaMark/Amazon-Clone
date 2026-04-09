@@ -6,7 +6,13 @@ export function addOrder(order) {
 }
 
 export function getOrderById(orderId) {
-  return orders.find((order) => order.id === orderId) || null;
+  const directMatch = orders.find((order) => order.id === orderId);
+  if (directMatch) {
+    return directMatch;
+  }
+
+  const fallbackIndex = orders.findIndex((_, index) => `ORD-${index + 1}` === orderId);
+  return fallbackIndex === -1 ? null : orders[fallbackIndex];
 }
 
 function saveToStorage() {
