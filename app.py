@@ -67,7 +67,11 @@ def place_order():
         flash("Missing payment details.")
         return redirect(url_for('checkout'))
 
-    amount = float(amount_raw)
+    try:
+        amount = float(amount_raw)
+    except ValueError:
+        flash("Invalid payment amount.")
+        return redirect(url_for('payment', order_id=order_id, totalAfterTax=amount_raw))
 
     try:
         if payment_method == 'paypal':
