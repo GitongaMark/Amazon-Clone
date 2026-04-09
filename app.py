@@ -40,27 +40,27 @@ def tracking_page():
 
 @app.route('/styles/<path:filename>')
 def styles(filename):
-    return send_from_directory('styles', filename)
+    return send_from_directory('static/styles', filename)
 
 
 @app.route('/scripts/<path:filename>')
 def scripts(filename):
-    return send_from_directory('scripts', filename)
+    return send_from_directory('static/scripts', filename)
 
 
 @app.route('/images/<path:filename>')
 def images(filename):
-    return send_from_directory('images', filename)
+    return send_from_directory('static/images', filename)
 
 
 @app.route('/data/<path:filename>')
 def data(filename):
-    return send_from_directory('data', filename)
+    return send_from_directory('static/data', filename)
 
 
 @app.route('/backend/<path:filename>')
 def backend_files(filename):
-    return send_from_directory('backend', filename)
+    return send_from_directory('static/backend', filename)
 
 @app.route('/place-order', methods=['POST'])
 def place_order():
