@@ -89,30 +89,6 @@
       </div>
     </div>
 
-    <script>
-      // Fetch cart item count from localStorage (or any other storage)
-      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-      const cartQuantityElement = document.getElementById('cart-quantity');
-      cartQuantityElement.innerText = cartItems.length; // Update cart quantity in header
-
-      // Fetch order tracking information (you could replace this with actual dynamic data from checkout)
-      const urlParams = new URLSearchParams(window.location.search);
-      const orderId = urlParams.get('orderId');
-
-      // Simulate fetching order details from localStorage or an API based on the orderId
-      const orderDetails = JSON.parse(localStorage.getItem('orders')) || {}; // You should replace with actual data fetching
-
-      const order = orderDetails[orderId];
-
-      if (order) {
-        document.getElementById('delivery-date').innerText = `Arriving on ${order.deliveryDate}`;
-        document.getElementById('product-info').innerText = order.productName;
-        document.getElementById('quantity-info').innerText = `Quantity: ${order.quantity}`;
-        document.getElementById('product-image').src = order.productImage;
-      } else {
-        // Handle case where order is not found
-        alert('Order not found!');
-      }
-    </script>
+    <script type="module" src="scripts/tracking.js"></script>
   </body>
 </html>
