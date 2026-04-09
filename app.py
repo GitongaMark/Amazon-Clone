@@ -59,9 +59,15 @@ def data(filename):
 
 @app.route('/place-order', methods=['POST'])
 def place_order():
-    order_id = request.form['order_id']
-    amount = float(request.form['amount'])
-    payment_method = request.form['payment_method']
+    order_id = request.form.get('order_id')
+    amount_raw = request.form.get('amount')
+    payment_method = request.form.get('payment_method')
+
+    if not order_id or not amount_raw or not payment_method:
+        flash("Missing payment details.")
+        return redirect(url_for('checkout'))
+
+    amount = float(amount_raw)
 
     try:
         if payment_method == 'paypal':
@@ -95,7 +101,7 @@ def place_order():
         send_order_confirmation_email(customer_email, order_id, amount, payment_method)
 
         flash("Payment successful! You will receive a confirmation email shortly.")
-        return redirect(url_for('order_details', order_id=order_id))
+        return redirect(url_for('orders_page'))
 
     except Exception as e:
         flash(f"Payment failed: {str(e)}")
