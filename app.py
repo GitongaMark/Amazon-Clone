@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from payments.paypal import process_paypal_payment
 from payments.visa_master import process_card_payment
 from payments.mpesa import process_mpesa_payment
@@ -11,6 +11,51 @@ app.secret_key = "your_secret_key"
 
 # Sample orders database (replace with a real database later)
 orders_db = {}
+
+
+@app.route('/')
+def home():
+    return redirect(url_for('amazon_page'))
+
+
+@app.route('/amazon.html')
+def amazon_page():
+    return render_template('amazon.html')
+
+
+@app.route('/checkout.html')
+def checkout():
+    return render_template('checkout.html')
+
+
+@app.route('/orders.html')
+def orders_page():
+    return render_template('orders.html')
+
+
+@app.route('/tracking.html')
+def tracking_page():
+    return render_template('tracking.html')
+
+
+@app.route('/styles/<path:filename>')
+def styles(filename):
+    return send_from_directory('styles', filename)
+
+
+@app.route('/scripts/<path:filename>')
+def scripts(filename):
+    return send_from_directory('scripts', filename)
+
+
+@app.route('/images/<path:filename>')
+def images(filename):
+    return send_from_directory('images', filename)
+
+
+@app.route('/data/<path:filename>')
+def data(filename):
+    return send_from_directory('data', filename)
 
 @app.route('/place-order', methods=['POST'])
 def place_order():
@@ -50,7 +95,7 @@ def place_order():
         send_order_confirmation_email(customer_email, order_id, amount, payment_method)
 
         flash("Payment successful! You will receive a confirmation email shortly.")
-        return redirect(url_for('orders', order_id=order_id))
+        return redirect(url_for('order_details', order_id=order_id))
 
     except Exception as e:
         flash(f"Payment failed: {str(e)}")
@@ -63,17 +108,17 @@ def payment():
         amount = request.form['amount']
     else:
         order_id = request.args.get('order_id')
-        amount = request.args.get('amount')
+        amount = request.args.get('amount') or request.args.get('totalAfterTax')
 
     if not order_id or not amount:
         flash("Missing order details.")
         return redirect(url_for('checkout'))  # Redirect back to checkout if missing
 
-    return render_template('payment.html', order_id=order_id, amount=amount)
+    return render_template('payment.html', order_id=order_id, totalAfterTax=amount)
 
 
 @app.route('/orders/<order_id>')
-def orders(order_id):
+def order_details(order_id):
     order = orders_db.get(order_id)
     if not order:
         return "Order not found", 404
