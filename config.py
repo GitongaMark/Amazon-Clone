@@ -13,4 +13,3 @@ class Config:
     EMAIL_PORT = os.getenv('EMAIL_PORT')
     EMAIL_USER = os.getenv('EMAIL_USER')
     EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
-    
