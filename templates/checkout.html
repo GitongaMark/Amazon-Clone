@@ -33,36 +33,10 @@
         <div class="order-summary js-order-summary">
         </div>
         <div class="payment-summary js-payment-summary">
-          
-          <!-- Hidden form to pass order_id and amount using POST -->
-          <form id="payment-form" action="/payment" method="post">
-            <input type="hidden" name="order_id" id="order-id" value="">
-            <input type="hidden" name="amount" id="order-amount" value="">
-            <button type="submit" class="place-order-button button-primary js-place-order">
-              Place your order
-            </button>
-          </form>
-          
-          <!-- Alternative: Link to pass order_id and amount using GET -->
-          <a id="payment-link" href="/payment" class="button-primary">Proceed to Payment</a>
         </div>
       </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js"></script>
     <script type="module" src="scripts/checkout.js"></script>
-    
-    <script>
-      // Sample order details (replace with real data from your cart system)
-      const orderId = "ORD12345"; // Generate or fetch from backend
-      const orderAmount = "49.99"; // Get total amount dynamically
-      
-      document.getElementById("order-id").value = orderId;
-      document.getElementById("order-amount").value = orderAmount;
-      
-      // Update GET request link with query params
-      const paymentLink = document.getElementById("payment-link");
-      paymentLink.href = `/payment?order_id=${orderId}&amount=${orderAmount}`;
-    </script>
   </body>
 </html>
