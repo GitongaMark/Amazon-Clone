@@ -57,6 +57,11 @@ def images(filename):
 def data(filename):
     return send_from_directory('data', filename)
 
+
+@app.route('/backend/<path:filename>')
+def backend_files(filename):
+    return send_from_directory('backend', filename)
+
 @app.route('/place-order', methods=['POST'])
 def place_order():
     order_id = request.form.get('order_id')

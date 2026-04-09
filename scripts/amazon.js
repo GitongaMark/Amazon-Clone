@@ -1,8 +1,5 @@
-import { products } from "../data/products.js";
+import { products, loadProductsFetch } from "../data/products.js";
 import { addToCart, getTotalItemsInCart } from "../data/cart.js";
-
-console.log("Products loaded successfully");
-renderProductsGrid(products);
 
 function updateCartCount() {
   const totalItems = getTotalItemsInCart();
@@ -12,9 +9,14 @@ function updateCartCount() {
   }
 }
 
-window.onload = function () {
+async function initPage() {
+  await loadProductsFetch();
+  renderProductsGrid(products);
   updateCartCount();
-};
+}
+
+document.addEventListener("DOMContentLoaded", initPage);
+
 function renderProductsGrid(products) {
   console.log("Rendering products grid...");
   let productsHTML = "";

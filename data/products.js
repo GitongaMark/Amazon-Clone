@@ -708,15 +708,35 @@ class Clothing extends Product {
     `;
   }
 }
-export const products = rawProducts.map((productDetails) => {
+function createProductModel(productDetails) {
   if (productDetails.type === "clothing") {
     return new Clothing(productDetails);
   }
   return new Product(productDetails);
-});
+}
+
+export let products = rawProducts.map(createProductModel);
+
 export function loadProducts(callback) {
-  console.log("Loading products...");
   if (callback) {
     callback(products);
   }
+  return products;
+}
+
+export async function loadProductsFetch() {
+  try {
+    const response = await fetch('/backend/products.json');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch products: ${response.status}`);
+    }
+
+    const fetchedProducts = await response.json();
+    products = fetchedProducts.map(createProductModel);
+  } catch (error) {
+    console.warn('Falling back to local product data:', error);
+    products = rawProducts.map(createProductModel);
+  }
+
+  return products;
 }

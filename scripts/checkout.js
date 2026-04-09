@@ -3,7 +3,7 @@ import {
   renderPaymentSummary,
   calculatePaymentTotals,
 } from "./checkout/paymentSummary.js";
-import { loadProducts, getProductById } from "../data/products.js";
+import { loadProductsFetch, getProductById } from "../data/products.js";
 import { getCartItems, getTotalItemsInCart } from "../data/cart.js";
 import { addOrder } from "../data/orders.js";
 import { getDeliveryOption } from "../data/deliveryOptions.js";
@@ -82,9 +82,9 @@ function handlePlaceOrder() {
   });
 }
 
-function loadPage() {
+async function loadPage() {
   try {
-    loadProducts();
+    await loadProductsFetch();
 
     const cartItems = getCartItems();
     if (cartItems.length === 0) {
