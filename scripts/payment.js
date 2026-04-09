@@ -1,174 +1,161 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const paymentOptions = document.querySelectorAll('.payment-option');
-    const form = document.getElementById('payment-form');
-    const placeOrderBtn = document.getElementById('place-order-btn');
-    let selectedMethod = 'paypal'; // Default payment method
+document.addEventListener("DOMContentLoaded", () => {
+  const paymentOptions = document.querySelectorAll(".payment-option");
+  const form = document.getElementById("payment-form");
+  const placeOrderBtn = document.getElementById("place-order-btn");
+  const orderIdInput = form.querySelector('input[name="order_id"]');
+  const amountInput = form.querySelector('input[name="amount"]');
+  const paymentMethodInput = form.querySelector('input[name="payment_method"]');
 
-    // Function to parse query parameters from the URL
-    function getQueryParams() {
-        const params = new URLSearchParams(window.location.search);
-        return {
-            order_id: params.get('order_id') || null,
-            totalAfterTax: params.get('totalAfterTax') || null
-        };
-    }
+  const cardDetails = document.getElementById("card-details");
+  const mpesaDetails = document.getElementById("mpesa-details");
+  const emailField = document.getElementById("email-field");
 
-    // Retrieve query parameters
-    const { order_id, totalAfterTax } = getQueryParams();
+  const cardNumberInput = form.card_number;
+  const expiryInput = form.card_expiry;
+  const cvvInput = form.card_cvv;
+  const phoneNumberInput = form.phone_number;
 
-    // Debugging: Log the retrieved parameters
-    console.log("Order ID:", order_id);
-    console.log("Total After Tax:", totalAfterTax);
+  let selectedMethod = "paypal";
 
-    // Validate the query parameters
-    if (!order_id || !totalAfterTax) {
-        console.error("Order ID or Total After Tax is missing.");
-        alert("An error occurred while retrieving payment details. Please try again.");
-        window.location.href = "checkout.html"; // Redirect back to checkout
-        return;
-    }
-        
+  function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      order_id: params.get("order_id"),
+      totalAfterTax: params.get("totalAfterTax") || params.get("amount"),
+    };
+  }
 
-    // Parse totalAfterTax as a number
-    const parsedTotalAfterTax = parseFloat(totalAfterTax);
-    if (isNaN(parsedTotalAfterTax) || parsedTotalAfterTax <= 0) {
-        console.error("Total after tax is invalid.");
-        alert("The total amount for payment is invalid. Please try again.");
-        window.location.href = "checkout.html"; // Redirect back to checkout
-        return;
-    }
+  function setRequiredState() {
+    const useCard = selectedMethod === "visa_master";
+    const usePhone = selectedMethod === "mpesa" || selectedMethod === "airtel_money";
 
-    // Populate hidden input fields in the payment form
-    document.querySelector('input[name="order_id"]').value = order_id;
-    document.querySelector('input[name="amount"]').value = parsedTotalAfterTax;
-
-    // Display the total amount on the payment page
-    document.querySelector('.payment-info p').textContent = `Amount to Pay: $${parsedTotalAfterTax}`;
-
-    // Function to handle payment option selection
-    function selectPaymentOption(method) {
-        paymentOptions.forEach(option => {
-            option.classList.remove('active');
-        });
-        document.querySelector(`[data-method="${method}"]`).classList.add('active');
-        selectedMethod = method;
-
-        // Show/hide additional fields based on the selected payment method
-        showAdditionalFields(method);
-    }
-
-    // Add click event listeners to payment options
-    paymentOptions.forEach(option => {
-        option.addEventListener('click', function () {
-            const method = this.getAttribute('data-method');
-            selectPaymentOption(method);
-        });
+    [cardNumberInput, expiryInput, cvvInput].forEach((input) => {
+      input.required = useCard;
+      input.disabled = !useCard;
+      if (!useCard) {
+        input.value = "";
+      }
     });
 
-    // Pre-select the first payment method
-    selectPaymentOption('paypal');
+    phoneNumberInput.required = usePhone;
+    phoneNumberInput.disabled = !usePhone;
+    if (!usePhone) {
+      phoneNumberInput.value = "";
+    }
+  }
 
-    // Function to show/hide additional fields
-    function showAdditionalFields(method) {
-        const cardDetails = document.getElementById('card-details');
-        const mpesaDetails = document.getElementById('mpesa-details');
-        const emailField = document.getElementById('email-field');
+  function showAdditionalFields(method) {
+    cardDetails.style.display = "none";
+    mpesaDetails.style.display = "none";
+    emailField.style.display = "block";
 
-        // Hide all additional fields by default
-        cardDetails.style.display = 'none';
-        mpesaDetails.style.display = 'none';
-        emailField.style.display = 'block'; // Email field is always visible
-
-        // Show relevant fields based on payment method
-        if (method === 'visa_master') {
-            cardDetails.style.display = 'block';
-        } else if (['mpesa', 'airtel_money'].includes(method)) {
-            mpesaDetails.style.display = 'block';
-        }
+    if (method === "visa_master") {
+      cardDetails.style.display = "block";
+    } else if (method === "mpesa" || method === "airtel_money") {
+      mpesaDetails.style.display = "block";
     }
 
-    // Form submission and redirection logic
-    form.addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent form submission temporarily
+    setRequiredState();
+  }
 
-        if (!selectedMethod) {
-            alert('Please select a payment method.');
-            return;
-        }
+  function selectPaymentOption(method) {
+    paymentOptions.forEach((option) => option.classList.remove("active"));
+    const selectedOption = document.querySelector(`[data-method="${method}"]`);
+    if (!selectedOption) {
+      return;
+    }
 
-        // Validate email field
-        const email = form.email.value.trim();
-        if (!validateEmail(email)) {
-            alert('Please enter a valid email address.');
-            return;
-        }
+    selectedOption.classList.add("active");
+    selectedMethod = method;
+    paymentMethodInput.value = method;
+    showAdditionalFields(method);
+  }
 
-        // Validate M-Pesa/Airtel Money fields if applicable
-        if (['mpesa', 'airtel_money'].includes(selectedMethod)) {
-            const phoneNumber = form.phone_number.value.trim();
-            if (!validatePhoneNumber(phoneNumber)) {
-                alert('Please enter a valid phone number.');
-                return;
-            }
-        }
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
 
-        // Validate card details if applicable
-        if (selectedMethod === 'visa_master') {
-            const cardNumber = form.card_number.value.trim();
-            const expiryDate = form.card_expiry.value.trim();
-            const cvv = form.card_cvv.value.trim();
+  function validatePhoneNumber(phoneNumber) {
+    const re = /^\+?\d{10,15}$/;
+    return re.test(phoneNumber);
+  }
 
-            if (!validateCardNumber(cardNumber)) {
-                alert('Please enter a valid card number.');
-                return;
-            }
-            if (!validateExpiryDate(expiryDate)) {
-                alert('Please enter a valid expiry date (MM/YY).');
-                return;
-            }
-            if (!validateCvv(cvv)) {
-                alert('Please enter a valid CVV.');
-                return;
-            }
-        }
+  function validateCardNumber(cardNumber) {
+    const re = /^\d{13,19}$/;
+    return re.test(cardNumber);
+  }
 
-        // Simulate payment processing
-        placeOrderBtn.disabled = true; // Disable the button to prevent multiple submissions
-        placeOrderBtn.textContent = 'Processing...'; // Update button text
+  function validateExpiryDate(expiryDate) {
+    const re = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    return re.test(expiryDate);
+  }
 
-        setTimeout(() => {
-            // Redirect to the orders page after successful payment
-            window.location.href = '/orders.html'; // Make this configurable if needed
-        }, 2000); // Simulate processing time (2 seconds)
+  function validateCvv(cvv) {
+    const re = /^\d{3,4}$/;
+    return re.test(cvv);
+  }
+
+  const params = getQueryParams();
+  const orderId = params.order_id || orderIdInput.value;
+  const totalAfterTax = params.totalAfterTax || amountInput.value;
+  const parsedTotalAfterTax = parseFloat(totalAfterTax);
+
+  if (!orderId || isNaN(parsedTotalAfterTax) || parsedTotalAfterTax <= 0) {
+    alert("An error occurred while retrieving payment details. Please try again.");
+    window.location.href = "checkout.html";
+    return;
+  }
+
+  orderIdInput.value = orderId;
+  amountInput.value = parsedTotalAfterTax.toFixed(2);
+  document.querySelector(".payment-info p").textContent = `Amount to Pay: $${parsedTotalAfterTax.toFixed(2)}`;
+
+  paymentOptions.forEach((option) => {
+    option.addEventListener("click", () => {
+      selectPaymentOption(option.dataset.method);
     });
+  });
 
-    // Simple email validation function
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
+  selectPaymentOption("paypal");
+
+  form.addEventListener("submit", (event) => {
+    const email = form.email.value.trim();
+    if (!validateEmail(email)) {
+      event.preventDefault();
+      alert("Please enter a valid email address.");
+      return;
     }
 
-    // Simple phone number validation function
-    function validatePhoneNumber(phoneNumber) {
-        const re = /^\+?\d{10,15}$/; // Allow international formats and lengths between 10-15 digits
-        return re.test(phoneNumber);
+    if (selectedMethod === "mpesa" || selectedMethod === "airtel_money") {
+      const phoneNumber = phoneNumberInput.value.trim();
+      if (!validatePhoneNumber(phoneNumber)) {
+        event.preventDefault();
+        alert("Please enter a valid phone number.");
+        return;
+      }
     }
 
-    // Card number validation function
-    function validateCardNumber(cardNumber) {
-        const re = /^\d{13,19}$/; // Allow card numbers between 13-19 digits
-        return re.test(cardNumber);
+    if (selectedMethod === "visa_master") {
+      if (!validateCardNumber(cardNumberInput.value.trim())) {
+        event.preventDefault();
+        alert("Please enter a valid card number.");
+        return;
+      }
+      if (!validateExpiryDate(expiryInput.value.trim())) {
+        event.preventDefault();
+        alert("Please enter a valid expiry date (MM/YY).");
+        return;
+      }
+      if (!validateCvv(cvvInput.value.trim())) {
+        event.preventDefault();
+        alert("Please enter a valid CVV.");
+        return;
+      }
     }
 
-    // Expiry date validation function
-    function validateExpiryDate(expiryDate) {
-        const re = /^(0[1-9]|1[0-2])\/\d{2}$/; // MM/YY format
-        return re.test(expiryDate);
-    }
-
-    // CVV validation function
-    function validateCvv(cvv) {
-        const re = /^\d{3,4}$/; // CVV is typically 3 or 4 digits
-        return re.test(cvv);
-    }
+    paymentMethodInput.value = selectedMethod;
+    placeOrderBtn.disabled = true;
+    placeOrderBtn.textContent = "Processing...";
+  });
 });
