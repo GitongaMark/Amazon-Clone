@@ -26,13 +26,18 @@ function calculateDeliveryDate(deliveryDays) {
 }
 
 function handlePlaceOrder() {
-  const placeOrderButton = document.querySelector(".js-place-order");
-  if (!placeOrderButton) {
-    console.error("Place order button not found.");
+  const paymentSummary = document.querySelector(".js-payment-summary");
+  if (!paymentSummary) {
+    console.error("Payment summary container not found.");
     return;
   }
 
-  placeOrderButton.addEventListener("click", () => {
+  paymentSummary.addEventListener("click", (event) => {
+    const placeOrderButton = event.target.closest(".js-place-order");
+    if (!placeOrderButton) {
+      return;
+    }
+
     if (!confirm("Are you sure you want to proceed to pay?")) {
       return;
     }
